@@ -1,0 +1,273 @@
+{
+  "info": {
+    "name": "PokéAPI — Testes de API",
+    "description": "Collection de testes de API para estudantes da disciplina S07 - Qualidade de Software.\nUtiliza a PokéAPI (https://pokeapi.co), uma API pública gratuita sobre Pokémon.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Pokémon",
+      "description": "Testes relacionados ao endpoint /pokemon",
+      "item": [
+        {
+          "name": "Buscar Pokémon por nome — Pikachu",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pokemon/pikachu",
+              "host": ["{{baseUrl}}"],
+              "path": ["pokemon", "pikachu"]
+            },
+            "description": "Busca o Pokémon Pikachu pelo nome e valida os campos principais da resposta."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Valida que a requisição foi bem-sucedida",
+                  "pm.test('Status deve ser 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Valida que a resposta é um JSON",
+                  "pm.test('Resposta deve ser JSON', function () {",
+                  "    pm.response.to.be.json;",
+                  "});",
+                  "",
+                  "// Valida que o nome retornado é pikachu",
+                  "pm.test('Nome do Pokémon deve ser pikachu', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.name).to.equal('pikachu');",
+                  "});",
+                  "",
+                  "// Valida que o ID do Pikachu é 25",
+                  "pm.test('ID do Pikachu deve ser 25', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.id).to.equal(25);",
+                  "});",
+                  "",
+                  "// Valida que o campo de tipos existe e não está vazio",
+                  "pm.test('Pokémon deve ter pelo menos um tipo', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.types).to.be.an('array').that.is.not.empty;",
+                  "});",
+                  "",
+                  "// Valida que o tempo de resposta é aceitável",
+                  "pm.test('Tempo de resposta deve ser menor que 3 segundos', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(3000);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Buscar Pokémon por nome — Bulbasaur",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pokemon/bulbasaur",
+              "host": ["{{baseUrl}}"],
+              "path": ["pokemon", "bulbasaur"]
+            },
+            "description": "Busca o Pokémon Bulbasaur e valida altura e peso."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Valida que a requisição foi bem-sucedida",
+                  "pm.test('Status deve ser 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Valida que o nome retornado é bulbasaur",
+                  "pm.test('Nome do Pokémon deve ser bulbasaur', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.name).to.equal('bulbasaur');",
+                  "});",
+                  "",
+                  "// Valida o ID do Bulbasaur (primeiro Pokémon da Pokédex)",
+                  "pm.test('ID do Bulbasaur deve ser 1', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.id).to.equal(1);",
+                  "});",
+                  "",
+                  "// Valida que a altura está presente e é um número positivo",
+                  "pm.test('Altura deve ser um número positivo', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.height).to.be.a('number').and.to.be.above(0);",
+                  "});",
+                  "",
+                  "// Valida que o peso está presente e é um número positivo",
+                  "pm.test('Peso deve ser um número positivo', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.weight).to.be.a('number').and.to.be.above(0);",
+                  "});",
+                  "",
+                  "// Valida que o Bulbasaur tem dois tipos (Grama e Veneno)",
+                  "pm.test('Bulbasaur deve ter dois tipos', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.types).to.have.lengthOf(2);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Buscar Pokémon por nome — Charmander",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pokemon/charmander",
+              "host": ["{{baseUrl}}"],
+              "path": ["pokemon", "charmander"]
+            },
+            "description": "Busca o Pokémon Charmander e valida suas habilidades."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Valida que a requisição foi bem-sucedida",
+                  "pm.test('Status deve ser 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Valida que o nome retornado é charmander",
+                  "pm.test('Nome do Pokémon deve ser charmander', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.name).to.equal('charmander');",
+                  "});",
+                  "",
+                  "// Valida que o campo de habilidades existe e não está vazio",
+                  "pm.test('Pokémon deve ter pelo menos uma habilidade', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.abilities).to.be.an('array').that.is.not.empty;",
+                  "});",
+                  "",
+                  "// Valida a estrutura de cada habilidade",
+                  "pm.test('Cada habilidade deve ter os campos obrigatórios', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    resposta.abilities.forEach(function (item) {",
+                  "        pm.expect(item).to.have.property('ability');",
+                  "        pm.expect(item.ability).to.have.property('name');",
+                  "        pm.expect(item).to.have.property('is_hidden');",
+                  "    });",
+                  "});",
+                  "",
+                  "// Valida que o Charmander é do tipo Fogo",
+                  "pm.test('Charmander deve ser do tipo fogo (fire)', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    const tipos = resposta.types.map(function (t) { return t.type.name; });",
+                  "    pm.expect(tipos).to.include('fire');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Buscar Pokémon inexistente — ID 9999",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pokemon/9999",
+              "host": ["{{baseUrl}}"],
+              "path": ["pokemon", "9999"]
+            },
+            "description": "Tenta buscar um Pokémon com ID inexistente e valida que a API retorna erro 404."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Valida que a API retorna 404 para recursos inexistentes",
+                  "pm.test('Status deve ser 404 para Pokémon inexistente', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});",
+                  "",
+                  "// Valida que o status 200 NÃO é retornado",
+                  "pm.test('Status não deve ser 200', function () {",
+                  "    pm.response.to.not.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Listar Pokémon — Paginação com 10 resultados",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/pokemon?limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["pokemon"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            },
+            "description": "Lista os primeiros 10 Pokémon e valida a estrutura de paginação da resposta."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// Valida que a requisição foi bem-sucedida",
+                  "pm.test('Status deve ser 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "// Valida que o campo count existe (total de Pokémon na API)",
+                  "pm.test('Resposta deve conter o campo count', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta).to.have.property('count');",
+                  "    pm.expect(resposta.count).to.be.a('number').and.to.be.above(0);",
+                  "});",
+                  "",
+                  "// Valida que a lista de resultados tem exatamente 10 itens",
+                  "pm.test('Lista deve conter exatamente 10 Pokémon', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta.results).to.have.lengthOf(10);",
+                  "});",
+                  "",
+                  "// Valida a estrutura de cada item da lista",
+                  "pm.test('Cada item da lista deve ter nome e URL', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    resposta.results.forEach(function (pokemon) {",
+                  "        pm.expect(pokemon).to.have.property('name');",
+                  "        pm.expect(pokemon).to.have.property('url');",
+                  "        pm.expect(pokemon.name).to.be.a('string').that.is.not.empty;",
+                  "    });",
+                  "});",
+                  "",
+                  "// Valida que o campo next existe (próxima página)",
+                  "pm.test('Resposta deve conter link para próxima página', function () {",
+                  "    const resposta = pm.response.json();",
+                  "    pm.expect(resposta).to.have.property('next');",
+                  "    pm.expect(resposta.next).to.be.a('string');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
