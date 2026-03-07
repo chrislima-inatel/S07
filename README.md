@@ -11,6 +11,10 @@
 
 ## 📋 Sobre o Projeto
 
+Repositório da disciplina Qualidade e Gerência de Configuração e Evolução de Software - S07.
+- Instituto Nacional de Telecomunicações - Inatel.
+- Prof. Christopher Lima
+
 Este repositório é um projeto educacional completo de automação de testes, criado para ajudar estudantes e profissionais de QA a aprenderem:
 
 - Como estruturar um projeto Cypress do zero
