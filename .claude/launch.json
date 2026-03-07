@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "cypress-open",
+      "runtimeExecutable": "/c/Program Files/nodejs/npx",
+      "runtimeArgs": ["cypress", "open"],
+      "port": 8080
+    },
+    {
+      "name": "cypress-open-sem-bdd",
+      "runtimeExecutable": "/c/Program Files/nodejs/npx",
+      "runtimeArgs": ["cypress", "open", "--spec", "cypress/sem-bdd/**/*.spec.js"],
+      "port": 8081
+    },
+    {
+      "name": "cypress-open-bdd",
+      "runtimeExecutable": "/c/Program Files/nodejs/npx",
+      "runtimeArgs": ["cypress", "open", "--config-file", "cypress.bdd.config.js"],
+      "port": 8082
+    }
+  ]
+}

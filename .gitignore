@@ -1,0 +1,36 @@
+# Dependências
+node_modules/
+
+# Cypress - Artefatos gerados
+cypress/videos/
+cypress/screenshots/
+cypress/downloads/
+
+# Relatórios
+cypress/reports/
+mochawesome-report/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# IDEs e editores
+.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Variáveis de ambiente
+.env
+.env.local
+.env.*.local
+
+# Cobertura de código
+coverage/
+.nyc_output/

@@ -1,97 +1,72 @@
-# S07 - Qualidade de Software
+# S07 — Qualidade de Software
 
-## Sobre a Disciplina
-
-A disciplina **S07** aborda os fundamentos e práticas de **Qualidade de Software**, com foco em dois pilares principais: **Testes Automatizados** e **DevOps**. O objetivo é capacitar os alunos a construir software confiável, sustentável e com entregas contínuas de valor.
+Material prático da disciplina **S07 - Qualidade de Software**, com dois projetos de automação de testes para os alunos explorarem e aprenderem na prática.
 
 ---
 
-## Conteúdo Programático
+## Projetos
 
-### Testes Automatizados
+### 1. Testes E2E com Cypress
 
-- **Fundamentos de Qualidade de Software**
-  - Conceitos de qualidade, defeito, falha e erro
-  - Pirâmide de testes (unitários, integração e E2E)
+**Diretório:** [`cypress-project/`](./cypress-project/)
 
-- **Testes Unitários**
-  - Estrutura de um teste (Arrange, Act, Assert)
-  - Mocks, stubs e fakes
-  - Cobertura de código
+Projeto de automação de testes End-to-End utilizando o site de demonstração [GlobalSQA](https://www.globalsqa.com). Cobre dois estilos de escrita de testes:
 
-- **Testes de Integração**
-  - Testes de API e banco de dados
-  - Isolamento de dependências externas
+- **Sem BDD** — Page Object Model (POM)
+- **Com BDD** — Gherkin + Cucumber
 
-- **Testes End-to-End (E2E)**
-  - Simulação de comportamento do usuário
-  - Ferramentas como Selenium, Cypress e Playwright
+**Tecnologias:** Cypress 13, Node.js 20, Cucumber Preprocessor
 
-- **TDD — Test-Driven Development**
-  - Ciclo Red → Green → Refactor
-  - Benefícios e boas práticas
+```bash
+cd cypress-project
+npm install
+npm test               # roda todos os testes
+npm run test:sem-bdd   # apenas testes POM
+npm run test:bdd       # apenas testes BDD
+```
 
-### DevOps
-
-- **Fundamentos de DevOps**
-  - Cultura DevOps e colaboração entre Dev e Ops
-  - Princípios de entrega contínua
-
-- **Controle de Versão**
-  - Git Flow e estratégias de branching
-  - Pull Requests e Code Review
-
-- **CI/CD — Integração e Entrega Contínua**
-  - Pipelines de build, test e deploy
-  - Ferramentas: GitHub Actions, GitLab CI, Jenkins
-
-- **Infraestrutura como Código (IaC)**
-  - Docker e containerização
-  - Conceitos de orquestração
-
-- **Monitoramento e Observabilidade**
-  - Logs, métricas e rastreamento
-  - Alertas e resposta a incidentes
+→ [Ver README completo do projeto Cypress](./cypress-project/README.md)
 
 ---
 
-## Objetivos de Aprendizagem
+### 2. Testes de API com Postman + Newman
 
-Ao final da disciplina, o aluno será capaz de:
+**Diretório:** [`api-testing/`](./api-testing/)
 
-- Escrever testes automatizados em diferentes níveis (unitário, integração, E2E)
-- Aplicar TDD no desenvolvimento de software
-- Configurar pipelines de CI/CD para projetos reais
-- Utilizar Docker para padronizar ambientes de desenvolvimento e produção
-- Compreender e aplicar os princípios da cultura DevOps
+Projeto de testes de API utilizando a [PokéAPI](https://pokeapi.co) — API pública e gratuita sobre Pokémon. Os testes são escritos em formato de collection Postman e executados via Newman (CLI do Postman).
 
----
+**Tecnologias:** Postman, Newman, newman-reporter-htmlextra
 
-## Ferramentas Utilizadas
+```bash
+cd api-testing
+npm install
+npm test               # roda os testes no terminal
+npm run test:relatorio # gera relatório HTML
+```
 
-| Categoria           | Ferramentas                          |
-|---------------------|--------------------------------------|
-| Testes Unitários    | JUnit, pytest, Jest, Vitest          |
-| Testes E2E          | Cypress, Playwright, Selenium        |
-| CI/CD               | GitHub Actions, GitLab CI, Jenkins   |
-| Containers          | Docker, Docker Compose               |
-| Controle de Versão  | Git, GitHub / GitLab                 |
-| Qualidade de Código | SonarQube, ESLint, Flake8            |
+→ [Ver README completo do projeto de API](./api-testing/README.md)
 
 ---
 
-## Avaliação
+## CI/CD
 
-- Trabalhos práticos de implementação de testes
-- Configuração de pipeline CI/CD em projeto próprio
-- Provas teóricas e práticas
+Ambos os projetos são executados automaticamente via **GitHub Actions** a cada push ou pull request para a branch `main`.
+
+| Job | Descrição |
+|---|---|
+| `testes-sem-bdd` | Cypress — Page Object Model |
+| `testes-bdd` | Cypress — Gherkin/Cucumber |
+| `testes-api` | Newman — PokéAPI |
+
+→ [Ver configuração do pipeline](./.github/workflows/ci.yml)
 
 ---
 
-## Referências
+## Conteúdo da Disciplina
 
-- PRESSMAN, Roger S. *Engenharia de Software: Uma Abordagem Profissional*. McGraw-Hill.
-- KIM, Gene et al. *The DevOps Handbook*. IT Revolution Press.
-- FOWLER, Martin. *Refactoring: Improving the Design of Existing Code*. Addison-Wesley.
-- [Martin Fowler — TestPyramid](https://martinfowler.com/bliki/TestPyramid.html)
-- [The Twelve-Factor App](https://12factor.net/)
+| Tema | Tópicos |
+|---|---|
+| **Testes Automatizados** | Pirâmide de testes, unitários, integração, E2E, TDD |
+| **Ferramentas de Teste** | Jest, Vitest, Cypress, Playwright, Selenium, Postman/Newman |
+| **DevOps** | Git Flow, CI/CD, GitHub Actions, Docker |
+| **Qualidade de Código** | SonarQube, ESLint, cobertura de código |

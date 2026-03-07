@@ -1,0 +1,15 @@
+{
+  "name": "api-testing-pokeapi",
+  "version": "1.0.0",
+  "description": "Projeto de estudo de testes de API com Postman/Newman — PokéAPI",
+  "author": "QA DevOps",
+  "license": "MIT",
+  "scripts": {
+    "test": "newman run collections/pokeapi.collection.json -e environments/pokeapi.environment.json",
+    "test:relatorio": "newman run collections/pokeapi.collection.json -e environments/pokeapi.environment.json --reporters cli,htmlextra --reporter-htmlextra-export relatorio.html"
+  },
+  "devDependencies": {
+    "newman": "^6.1.0",
+    "newman-reporter-htmlextra": "^1.22.11"
+  }
+}
