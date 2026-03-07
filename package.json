@@ -1,0 +1,25 @@
+{
+  "name": "cypress-globalsqa-automacao",
+  "version": "1.0.0",
+  "description": "Projeto de estudo de automação de testes com Cypress — GlobalSQA Demo Site",
+  "author": "QA DevOps",
+  "license": "MIT",
+  "scripts": {
+    "cypress:abrir": "cypress open",
+    "test": "cypress run",
+    "test:sem-bdd": "cypress run --spec 'cypress/sem-bdd/**/*.spec.js'",
+    "test:bdd": "cypress run --config-file cypress.bdd.config.js",
+    "abrir:sem-bdd": "cypress open --spec 'cypress/sem-bdd/**/*.spec.js'",
+    "abrir:bdd": "cypress open --config-file cypress.bdd.config.js"
+  },
+  "devDependencies": {
+    "@badeball/cypress-cucumber-preprocessor": "^21.0.0",
+    "@bahmutov/cypress-esbuild-preprocessor": "^2.0.0",
+    "cypress": "^13.0.0",
+    "esbuild": "^0.20.0"
+  },
+  "cypress-cucumber-preprocessor": {
+    "nonGlobalStepDefinitions": false,
+    "stepDefinitions": "cypress/bdd/step_definitions/**/*.steps.js"
+  }
+}
