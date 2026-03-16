@@ -1,80 +1,75 @@
 /**
- * Testes sem BDD — Página de Abas (Tabs)
- * URL: https://www.globalsqa.com/demo-site/tabs/
+ * Testes sem BDD — Navegação por Abas
+ * URL: https://www.globalsqa.com/demo-site/accordion-and-tabs/
  *
- * Abordagem: Page Object Model (POM)
- * Os testes verificam o comportamento das abas jQuery UI:
- * - Aba padrão selecionada ao carregar a página
- * - Troca de aba ao clicar
- * - Conteúdo correspondente exibido/oculto
+ * A página /demo-site/tabs/ foi removida do servidor.
+ * O widget de abas responsivo (.newtabs / easyResponsiveTabs) está disponível
+ * na página de Accordion & Tabs, onde organiza conteúdo em painéis.
+ *
+ * Estrutura do widget após o JavaScript inicializar:
+ *  - .resp-tabs-list > li.resp-tab-item   → itens de aba (navegação)
+ *  - li.resp-tab-active                   → aba ativa
+ *  - .resp-tab-content                    → painel de conteúdo
+ *  - .resp-tab-content-active             → painel ativo (visível)
  */
-import AbasPage from '../../pages/AbasPage'
-
-describe('Página de Abas', () => {
-  // Executa antes de cada teste: acessa a página
+describe('Navegação por Abas', () => {
   beforeEach(() => {
-    AbasPage.acessar()
+    cy.visit('/demo-site/accordion-and-tabs/')
+    // Aguarda o plugin de abas inicializar e renderizar os itens
+    cy.get('.resp-tab-item').should('exist')
   })
 
   // ---------------------------------------------------------------------------
   context('Carregamento inicial', () => {
-    it('deve exibir a primeira aba ativa por padrão', () => {
-      AbasPage.verificarAbaAtiva(0)
+    it('deve exibir pelo menos 2 abas de navegação', () => {
+      cy.get('.resp-tabs-list li').should('have.length.at.least', 2)
     })
 
-    it('deve exibir o conteúdo da primeira aba por padrão', () => {
-      AbasPage.painelAtivo.should('be.visible')
+    it('deve ter a primeira aba ativa por padrão', () => {
+      cy.get('.resp-tabs-list li').first().should('have.class', 'resp-tab-active')
     })
 
-    it('deve ter exatamente 3 abas disponíveis', () => {
-      AbasPage.itensDeAba.should('have.length', 3)
+    it('deve exibir conteúdo na aba ativa', () => {
+      cy.get('.resp-tab-content-active').should('be.visible')
     })
   })
 
   // ---------------------------------------------------------------------------
   context('Navegação entre abas', () => {
     it('deve ativar a segunda aba ao clicar nela', () => {
-      AbasPage.clicarAba(1)
-      AbasPage.verificarAbaAtiva(1)
+      cy.get('.resp-tabs-list li').eq(1).click()
+      cy.get('.resp-tabs-list li').eq(1).should('have.class', 'resp-tab-active')
     })
 
     it('deve ativar a terceira aba ao clicar nela', () => {
-      AbasPage.clicarAba(2)
-      AbasPage.verificarAbaAtiva(2)
+      cy.get('.resp-tabs-list li').eq(2).click()
+      cy.get('.resp-tabs-list li').eq(2).should('have.class', 'resp-tab-active')
     })
 
     it('deve voltar para a primeira aba ao clicar nela', () => {
-      // Navega para a terceira aba primeiro
-      AbasPage.clicarAba(2)
-      // Volta para a primeira
-      AbasPage.clicarAba(0)
-      AbasPage.verificarAbaAtiva(0)
+      cy.get('.resp-tabs-list li').eq(1).click()
+      cy.get('.resp-tabs-list li').first().click()
+      cy.get('.resp-tabs-list li').first().should('have.class', 'resp-tab-active')
     })
   })
 
   // ---------------------------------------------------------------------------
   context('Conteúdo das abas', () => {
-    it('deve ocultar o conteúdo das abas inativas ao trocar de aba', () => {
+    it('deve ocultar o conteúdo da aba anterior ao trocar de aba', () => {
+      // A primeira aba está ativa - seu conteúdo deve estar visível
+      cy.get('.resp-tab-content').first().should('be.visible')
+
       // Clica na segunda aba
-      AbasPage.clicarAba(1)
-      // O painel da primeira aba (índice 0) deve estar oculto
-      AbasPage.verificarPainelOculto(0)
+      cy.get('.resp-tabs-list li').eq(1).click()
+
+      // O conteúdo da primeira aba deve ficar oculto
+      cy.get('.resp-tab-content').first().should('not.be.visible')
     })
 
-    it('deve exibir conteúdo diferente em cada aba', () => {
-      let textoPrimeiraAba = ''
-
-      // Captura o texto da primeira aba
-      AbasPage.painelAtivo.invoke('text').then((texto) => {
-        textoPrimeiraAba = texto
-      })
-
-      // Clica na segunda aba
-      AbasPage.clicarAba(1)
-
-      // Verifica que o conteúdo é diferente
-      AbasPage.painelAtivo.invoke('text').should((textoSegundaAba) => {
-        expect(textoSegundaAba).not.to.equal(textoPrimeiraAba)
+    it('deve exibir conteúdo diferente ao trocar de aba', () => {
+      cy.get('.resp-tab-content-active').invoke('text').then((textoAba1) => {
+        cy.get('.resp-tabs-list li').eq(1).click()
+        cy.get('.resp-tab-content-active').invoke('text').should('not.equal', textoAba1)
       })
     })
   })

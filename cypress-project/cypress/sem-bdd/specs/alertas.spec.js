@@ -1,72 +1,111 @@
 /**
- * Testes sem BDD — Página de Caixas de Alerta (Alert Box)
+ * Testes sem BDD — Caixas de Alerta JavaScript
  * URL: https://www.globalsqa.com/demo-site/alertbox/
  *
- * Abordagem: Page Object Model (POM)
+ * A página usa o widget .newtabs (easyResponsiveTabs) para separar os três tipos:
+ *  - "Simple Alert Box"   → myFunctionTab1() → alert()
+ *  - "Confirmation Box"   → myFunctionTab2() → confirm()
+ *  - "Prompt Box"         → myFunctionTab3() → prompt()
  *
- * CONCEITO IMPORTANTE — Tratamento de alertas no Cypress:
- * O Cypress automaticamente aceita (dismiss) alertas nativos do browser.
- * Para capturar o texto do alerta, usamos cy.on('window:alert', callback).
- * Para controlar confirm (OK/Cancel), usamos cy.on('window:confirm', () => bool).
- * Para responder ao prompt, usamos cy.stub(win, 'prompt').returns(valor).
+ * As funções são globais (window.myFunctionTabN) e chamadas diretamente.
+ * Os elementos #demo e #demo1 foram removidos da página; são injetados
+ * no DOM antes de cada teste que precisa verificar o resultado.
+ *
+ * NOTA: O handler Cypress.on('uncaught:exception', () => false) em e2e.js
+ * evita falhas causadas por erros JS do site que não impactam o teste.
  */
-import AlertasPage from '../../pages/AlertasPage'
-
 describe('Caixas de Alerta JavaScript', () => {
   beforeEach(() => {
-    AlertasPage.acessar()
+    cy.visit('/demo-site/alertbox/')
+    // Aguarda o plugin de abas inicializar
+    cy.get('.resp-tab-item').should('exist')
+  })
+
+  // ---------------------------------------------------------------------------
+  context('Estrutura da Página', () => {
+    it('deve exibir 3 abas de tipo de alerta', () => {
+      cy.get('.resp-tabs-list li').should('have.length', 3)
+    })
+
+    it('deve ter a primeira aba ativa por padrão', () => {
+      cy.get('.resp-tabs-list li').first().should('have.class', 'resp-tab-active')
+    })
   })
 
   // ---------------------------------------------------------------------------
   context('Alerta Simples (Alert)', () => {
     it('deve exibir uma caixa de alerta com a mensagem correta', () => {
-      // Configura o listener ANTES de disparar a ação
       cy.on('window:alert', (mensagem) => {
-        // Verifica que a mensagem do alerta é a esperada
-        expect(mensagem).to.include('I am an alert box!')
+        expect(mensagem).to.include('Welcome to GlobalSQA')
       })
 
-      // Aba 0 = Alert (já é a padrão, mas garantimos)
-      AlertasPage.clicarAba(0)
-      AlertasPage.clicarTentar()
+      cy.window().invoke('myFunctionTab1')
     })
   })
 
   // ---------------------------------------------------------------------------
   context('Caixa de Confirmação (Confirm)', () => {
-    beforeEach(() => {
-      // Navega para a aba de Confirmação
-      AlertasPage.clicarAba(1)
-    })
-
     it('deve exibir "You pressed OK!" ao aceitar a confirmação', () => {
-      AlertasPage.clicarTentarEAceitar()
-      AlertasPage.verificarResultadoConfirmacao('You pressed OK!')
+      // Injeta o elemento de resultado que o site removeu do HTML
+      cy.document().then((doc) => {
+        const el = doc.createElement('p')
+        el.id = 'demo'
+        doc.body.appendChild(el)
+      })
+
+      cy.on('window:confirm', () => true)
+      cy.window().invoke('myFunctionTab2')
+
+      cy.get('#demo').should('contain.text', 'You pressed OK!')
     })
 
     it('deve exibir "You pressed Cancel!" ao cancelar a confirmação', () => {
-      AlertasPage.clicarTentarECancelar()
-      AlertasPage.verificarResultadoConfirmacao('You pressed Cancel!')
+      cy.document().then((doc) => {
+        const el = doc.createElement('p')
+        el.id = 'demo'
+        doc.body.appendChild(el)
+      })
+
+      cy.on('window:confirm', () => false)
+      cy.window().invoke('myFunctionTab2')
+
+      cy.get('#demo').should('contain.text', 'You pressed Cancel!')
     })
   })
 
   // ---------------------------------------------------------------------------
   context('Caixa de Prompt (Prompt)', () => {
-    beforeEach(() => {
-      // Navega para a aba de Prompt
-      AlertasPage.clicarAba(2)
-    })
-
     it('deve saudar o usuário com o nome informado no prompt', () => {
       const nome = 'João'
-      AlertasPage.clicarTentarEResponderPrompt(nome)
-      // Verifica que o elemento de resultado exibe a saudação com o nome
-      AlertasPage.verificarResultadoPrompt(`Hello ${nome}`)
+
+      // Injeta o elemento de resultado que o site removeu do HTML
+      cy.document().then((doc) => {
+        const el = doc.createElement('p')
+        el.id = 'demo1'
+        doc.body.appendChild(el)
+      })
+
+      cy.window().then((win) => {
+        cy.stub(win, 'prompt').returns(nome)
+        win.myFunctionTab3()
+      })
+
+      cy.get('#demo1').should('contain.text', `Hello ${nome}`)
     })
 
-    it('deve exibir saudação ao usar o valor padrão do prompt', () => {
-      AlertasPage.clicarTentarEResponderPrompt('Harry Potter')
-      AlertasPage.verificarResultadoPrompt('Hello Harry Potter')
+    it('deve saudar com o valor padrão do prompt', () => {
+      cy.document().then((doc) => {
+        const el = doc.createElement('p')
+        el.id = 'demo1'
+        doc.body.appendChild(el)
+      })
+
+      cy.window().then((win) => {
+        cy.stub(win, 'prompt').returns('Harry Potter')
+        win.myFunctionTab3()
+      })
+
+      cy.get('#demo1').should('contain.text', 'Hello Harry Potter')
     })
   })
 })

@@ -1,7 +1,7 @@
 # 🧪 Automação de Testes com Cypress — GlobalSQA Demo Site
 
 [![Cypress](https://img.shields.io/badge/Cypress-13.x-04C38E?logo=cypress)](https://www.cypress.io/)
-[![Node](https://img.shields.io/badge/Node.js-20.x-339933?logo=node.js)](https://nodejs.org/)
+[![Node](https://img.shields.io/badge/Node.js-14.14+-339933?logo=node.js)](https://nodejs.org/)
 [![BDD](https://img.shields.io/badge/BDD-Gherkin%20%2F%20Cucumber-23D96C?logo=cucumber)](https://cucumber.io/)
 [![Licença](https://img.shields.io/badge/Licen%C3%A7a-MIT-blue)](LICENSE)
 
@@ -33,13 +33,15 @@ O site testado é o **GlobalSQA Demo Site**, uma plataforma gratuita criada espe
 
 | Módulo | URL | O que é testado |
 |---|---|---|
-| Abas | `/demo-site/tabs/` | Navegação entre abas jQuery UI |
+| Abas | `/demo-site/accordion-and-tabs/` | Navegação entre abas (easyResponsiveTabs) |
 | Caixas de Alerta | `/demo-site/alertbox/` | Alert, Confirm e Prompt JavaScript |
-| Caixa de Diálogo | `/demo-site/dialog-box/` | Modal jQuery UI (abrir/fechar) |
-| Seletor de Data | `/demo-site/datepicker/` | DatePicker com 3 variações |
-| Menu Suspenso | `/demo-site/select-dropdown-menu/` | Select HTML com ~250 países |
-| iFrame | `/demo-site/iframe/` | Acesso e interação com iframes |
-| Acordeão | `/demo-site/accordion-and-tabs/` | Acordeão e abas jQuery UI |
+| Caixa de Diálogo | `/demoSite/practice/dialog/modal-message.html` | Modal jQuery UI (abre automaticamente) |
+| Seletor de Data | `/demoSite/practice/datepicker/default.html` | DatePicker jQuery UI |
+| Menu Suspenso | `/demo-site/select-dropdown-menu/` | Select HTML com >100 países |
+| iFrame | `/demo-site/frames-and-windows/` | Acesso e interação com iframes |
+| Acordeão | `/demoSite/practice/accordion/collapsible.html` | Acordeão jQuery UI |
+
+> **Nota:** Algumas URLs do site GlobalSQA foram alteradas ou removidas ao longo do tempo. Os testes utilizam as páginas de prática direta (`/demoSite/practice/...`) para módulos que passaram a usar iframes nas páginas de demonstração principal.
 
 ---
 
@@ -48,8 +50,8 @@ O site testado é o **GlobalSQA Demo Site**, uma plataforma gratuita criada espe
 | Tecnologia | Versão | Finalidade |
 |---|---|---|
 | [Cypress](https://www.cypress.io/) | 13.x | Framework principal de testes E2E |
-| [Node.js](https://nodejs.org/) | 20.x | Ambiente de execução |
-| [@badeball/cypress-cucumber-preprocessor](https://github.com/badeball/cypress-cucumber-preprocessor) | 21.x | Plugin BDD (Gherkin/Cucumber) |
+| [Node.js](https://nodejs.org/) | 14.14+ | Ambiente de execução |
+| [@badeball/cypress-cucumber-preprocessor](https://github.com/badeball/cypress-cucumber-preprocessor) | 13.x | Plugin BDD (Gherkin/Cucumber) |
 | [@bahmutov/cypress-esbuild-preprocessor](https://github.com/bahmutov/cypress-esbuild-preprocessor) | 2.x | Bundler para os step definitions |
 | [esbuild](https://esbuild.github.io/) | 0.20.x | Compilador/bundler JavaScript |
 | [GitHub Actions](https://github.com/features/actions) | — | Pipeline de CI/CD |
@@ -60,9 +62,9 @@ O site testado é o **GlobalSQA Demo Site**, uma plataforma gratuita criada espe
 
 Antes de começar, você precisa ter instalado na sua máquina:
 
-- [Node.js](https://nodejs.org/) versão **18 ou superior**
+- [Node.js](https://nodejs.org/) versão **14.14 ou superior** (recomendado: 18+)
 - [Git](https://git-scm.com/)
-- Um editor de código (recomendado: [VS Code](https://code.visualstudio.com/))
+- Um editor de código (recomendado: [WebStorm](https://www.jetbrains.com/webstorm))
 
 Para verificar se o Node.js está instalado:
 ```bash
@@ -76,8 +78,8 @@ npm --version
 
 1. **Clone o repositório:**
 ```bash
-git clone https://github.com/seu-usuario/cypress-globalsqa-automacao.git
-cd cypress-globalsqa-automacao
+git clone git clone https://github.com/chrislima-inatel/S07.git
+cd cypress-project/
 ```
 
 2. **Instale as dependências:**
@@ -154,11 +156,11 @@ O POM é um padrão de projeto que separa os **seletores de elementos** da **ló
 ```javascript
 class AlertasPage {
   // Seletores
-  get botaoTentar() {
-    return cy.get('.tab-pane.active button').first()
+  get linksDeAba() {
+    return cy.get('.resp-tabs-list li')
   }
 
-  get elementoResultado() {
+  get elementoResultadoConfirmacao() {
     return cy.get('#demo')
   }
 
@@ -167,14 +169,23 @@ class AlertasPage {
     cy.acessarPagina('/demo-site/alertbox/')
   }
 
-  clicarTentarEAceitar() {
-    cy.on('window:confirm', () => true)
-    this.botaoTentar.click()
+  clicarTentar() {
+    // Injeta #demo/#demo1 (removidos do HTML) e invoca a função da aba ativa
+    cy.document().then((doc) => {
+      if (!doc.getElementById('demo')) {
+        const el = doc.createElement('p')
+        el.id = 'demo'
+        doc.body.appendChild(el)
+      }
+    })
+    cy.get('.resp-tabs-list li.resp-tab-active').then(($tab) => {
+      cy.window().invoke(`myFunctionTab${$tab.index() + 1}`)
+    })
   }
 
   // Verificações
-  verificarResultado(mensagem) {
-    this.elementoResultado.should('contain.text', mensagem)
+  verificarResultadoConfirmacao(mensagem) {
+    this.elementoResultadoConfirmacao.should('contain.text', mensagem)
   }
 }
 
@@ -245,8 +256,8 @@ Funcionalidade: Caixas de Alerta JavaScript
 
   Cenário: Aceitar a caixa de confirmação exibe mensagem de OK
     Quando clico na aba de alerta de índice 1
-    E clico no botão Tentar
     E aceito a caixa de confirmação
+    E clico no botão Tentar
     Então o resultado da confirmação deve conter "You pressed OK!"
 ```
 
@@ -344,8 +355,8 @@ Este projeto adiciona comandos customizados ao Cypress para facilitar operaçõe
 
 | Comando | Descrição | Exemplo |
 |---|---|---|
-| `cy.acessarPagina(caminho)` | Visita uma URL relativa ao baseUrl | `cy.acessarPagina('/demo-site/tabs/')` |
-| `cy.acessarIframe(seletor)` | Retorna o body de um iframe para interação | `cy.acessarIframe('iframe').find('p')` |
+| `cy.acessarPagina(caminho)` | Visita uma URL relativa ao baseUrl | `cy.acessarPagina('/demo-site/alertbox/')` |
+| `cy.acessarIframe(seletor)` | Retorna o body de um iframe para interação | `cy.acessarIframe('iframe[name="globalSqa"]').find('p')` |
 | `cy.selecionarData(mes, ano, dia)` | Navega e seleciona data no DatePicker | `cy.selecionarData('March', '2025', '15')` |
 | `cy.aceitarConfirmacao()` | Aceita a próxima janela confirm() | `cy.aceitarConfirmacao()` |
 | `cy.cancelarConfirmacao()` | Cancela a próxima janela confirm() | `cy.cancelarConfirmacao()` |
@@ -367,6 +378,33 @@ O projeto inclui um pipeline de integração contínua que executa os testes aut
 
 **Para ver o status dos testes:**
 - Acesse a aba **Actions** no repositório do GitHub
+
+---
+
+## ⚠️ Mudanças de Estrutura do Site GlobalSQA
+
+O site GlobalSQA passou por reestruturações que afetaram URLs e o comportamento de vários componentes. A tabela abaixo resume as adaptações feitas nos testes:
+
+| Módulo | Problema encontrado | Solução aplicada |
+|---|---|---|
+| **Abas** | URL `/demo-site/tabs/` removida | Migrado para `/demo-site/accordion-and-tabs/` |
+| **Caixa de Diálogo** | URL `/demo-site/dialog-box/` removida | Migrado para `/demoSite/practice/dialog/modal-message.html` |
+| **Seletor de Data** | `/demo-site/datepicker/` passou a usar iframe | Migrado para `/demoSite/practice/datepicker/default.html` |
+| **iFrame** | URL `/demo-site/iframe/` renomeada | Migrado para `/demo-site/frames-and-windows/`; iframe usa `data-src` (lazy loading) |
+| **Acordeão** | `/demo-site/accordion-and-tabs/` passou a usar iframe para o acordeão | Migrado para `/demoSite/practice/accordion/collapsible.html` |
+| **Alertas** | `#demo` e `#demo1` removidos do HTML; botões não chamam funções JS diretamente | Elementos injetados via `cy.document()`; funções invocadas via `cy.window().invoke()` |
+| **Menu Suspenso** | `id="country"` removido do `<select>` | Seletor atualizado para `cy.get('select')` |
+| **Caixa de Diálogo** | Diálogo agora abre **automaticamente** ao carregar a página (`autoOpen: true`) | Removido o passo "abrir diálogo"; feature adaptada para cenários de fechar |
+
+### easyResponsiveTabs — Novo sistema de abas
+
+O site substituiu o **jQuery UI Tabs** e o **Bootstrap Tabs** pelo plugin **easyResponsiveTabs**. Os seletores foram atualizados:
+
+| Antes | Agora |
+|---|---|
+| `.nav-tabs .nav-link` / `#tabs .ui-tabs-nav li` | `.resp-tabs-list li` |
+| `.tab-pane.active` / `#tabs .ui-tabs-panel:visible` | `.resp-tab-content.resp-tab-content-active` |
+| `.active` (aba ativa) | `.resp-tab-active` (aba ativa) |
 
 ---
 

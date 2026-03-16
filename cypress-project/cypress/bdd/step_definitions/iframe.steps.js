@@ -18,13 +18,13 @@ Then('o iframe deve ter o atributo {string} definido', (atributo) => {
 })
 
 Then('o conteúdo do iframe não deve estar vazio', () => {
-  cy.acessarIframe('iframe').should('not.be.empty')
+  cy.acessarIframe('iframe[name="globalSqa"]').should('not.be.empty')
 })
 
 Then('deve ser possível encontrar elementos HTML dentro do iframe', () => {
-  cy.acessarIframe('iframe').find('p, div, h1, h2, h3, span').should('exist')
+  cy.acessarIframe('iframe[name="globalSqa"]').find('p, div, h1, h2, h3, span').should('exist')
 })
 
 Then('o texto dentro do iframe não deve estar vazio', () => {
-  cy.acessarIframe('iframe').invoke('text').should('not.be.empty')
+  cy.acessarIframe('iframe[name="globalSqa"]').invoke('text').should('not.be.empty')
 })

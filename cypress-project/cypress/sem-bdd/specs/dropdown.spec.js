@@ -2,85 +2,74 @@
  * Testes sem BDD — Menu Suspenso (Dropdown)
  * URL: https://www.globalsqa.com/demo-site/select-dropdown-menu/
  *
- * Abordagem: Page Object Model (POM)
+ * O elemento <select> não possui mais o atributo id="country".
+ * A lista foi reduzida de ~250 para ~125 países.
+ * Países confirmados: Brazil (BRA), Argentina (ARG), France (FRA).
  *
- * A página contém um elemento <select> HTML nativo com ~250 países.
- * O Cypress interage com selects usando cy.select().
+ * O Cypress interage com selects usando cy.select() — por texto visível ou valor.
  */
-import DropdownPage from '../../pages/DropdownPage'
-
 describe('Menu Suspenso de Países', () => {
   beforeEach(() => {
-    DropdownPage.acessar()
+    cy.visit('/demo-site/select-dropdown-menu/')
+    cy.get('select').should('be.visible')
   })
 
   // ---------------------------------------------------------------------------
   context('Carregamento inicial', () => {
     it('deve exibir o dropdown na página', () => {
-      DropdownPage.seletorPais.should('be.visible')
+      cy.get('select').should('be.visible')
     })
 
-    it('deve ter mais de 200 países disponíveis', () => {
-      // O select tem ~250 países + 1 opção vazia
-      DropdownPage.seletorPais.find('option').should('have.length.greaterThan', 200)
+    it('deve ter mais de 100 países disponíveis', () => {
+      cy.get('select option').should('have.length.greaterThan', 100)
+    })
+
+    it('deve ser um elemento select HTML válido', () => {
+      cy.get('select').should('have.prop', 'tagName', 'SELECT')
     })
   })
 
   // ---------------------------------------------------------------------------
   context('Seleção de países', () => {
     it('deve selecionar o Brasil no dropdown', () => {
-      DropdownPage.selecionarPais('Brazil')
-      DropdownPage.verificarPaisSelecionado('Brazil')
+      cy.get('select').select('Brazil')
+      cy.get('select option:selected').should('have.text', 'Brazil')
     })
 
     it('deve selecionar a Argentina no dropdown', () => {
-      DropdownPage.selecionarPais('Argentina')
-      DropdownPage.verificarPaisSelecionado('Argentina')
+      cy.get('select').select('Argentina')
+      cy.get('select option:selected').should('have.text', 'Argentina')
     })
 
-    it('deve selecionar Portugal no dropdown', () => {
-      DropdownPage.selecionarPais('Portugal')
-      DropdownPage.verificarPaisSelecionado('Portugal')
+    it('deve selecionar a França no dropdown', () => {
+      cy.get('select').select('France')
+      cy.get('select option:selected').should('have.text', 'France')
     })
 
     it('deve permitir trocar de país selecionado', () => {
-      // Seleciona o primeiro país
-      DropdownPage.selecionarPais('Brazil')
-      DropdownPage.verificarPaisSelecionado('Brazil')
+      cy.get('select').select('Brazil')
+      cy.get('select option:selected').should('have.text', 'Brazil')
 
-      // Troca para outro país
-      DropdownPage.selecionarPais('Argentina')
-      DropdownPage.verificarPaisSelecionado('Argentina')
+      cy.get('select').select('Argentina')
+      cy.get('select option:selected').should('have.text', 'Argentina')
     })
   })
 
   // ---------------------------------------------------------------------------
   context('Verificação de opções disponíveis', () => {
-    it('deve conter o Brasil nas opções', () => {
-      DropdownPage.verificarPaisExisteNasOpcoes('Brazil')
+    it('deve conter o Brasil nas opções (por valor)', () => {
+      cy.get('select option[value="BRA"]').should('exist')
     })
 
-    it('deve conter os EUA nas opções', () => {
-      DropdownPage.verificarPaisExisteNasOpcoes('United States')
+    it('deve conter a Argentina nas opções (por valor)', () => {
+      cy.get('select option[value="ARG"]').should('exist')
     })
 
-    it('deve conter Portugal nas opções', () => {
-      DropdownPage.verificarPaisExisteNasOpcoes('Portugal')
-    })
-  })
-
-  // ---------------------------------------------------------------------------
-  context('Comportamento do elemento select', () => {
-    it('deve ser um elemento select HTML válido', () => {
-      DropdownPage.seletorPais.should('have.prop', 'tagName', 'SELECT')
-    })
-
-    it('deve manter a seleção após a interação', () => {
-      DropdownPage.selecionarPais('Brazil')
-      // Rola a página e verifica que a seleção persiste
+    it('deve manter a seleção após rolar a página', () => {
+      cy.get('select').select('Brazil')
       cy.scrollTo('bottom')
       cy.scrollTo('top')
-      DropdownPage.verificarPaisSelecionado('Brazil')
+      cy.get('select option:selected').should('have.text', 'Brazil')
     })
   })
 })

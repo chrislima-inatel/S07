@@ -2,17 +2,20 @@
  * Page Object — Página de Menu Suspenso (Select Dropdown)
  * URL: https://www.globalsqa.com/demo-site/select-dropdown-menu/
  *
- * A página contém um elemento <select> HTML padrão com ~250 países.
+ * A página contém um elemento <select> HTML padrão com ~125 países.
  * O Cypress interage com ele usando cy.select() nativamente.
+ *
+ * Seletor atualizado: id="country" foi removido do <select>.
+ * Usar cy.get('select') para localizar o elemento.
  */
 class DropdownPage {
   // ===========================================================================
   // SELETORES (Getters)
   // ===========================================================================
 
-  /** Elemento <select> de países */
+  /** Elemento <select> de países (id="country" foi removido do HTML) */
   get seletorPais() {
-    return cy.get('#country')
+    return cy.get('select')
   }
 
   /** Label associada ao dropdown */

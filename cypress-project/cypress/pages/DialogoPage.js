@@ -1,9 +1,17 @@
 /**
  * Page Object — Página de Caixa de Diálogo (Dialog Box)
- * URL: https://www.globalsqa.com/demo-site/dialog-box/
+ * URL: https://www.globalsqa.com/demoSite/practice/dialog/modal-message.html
  *
- * O site usa jQuery UI Dialog para exibir modais.
- * O diálogo é um componente HTML (não um alerta nativo do browser).
+ * A URL /demo-site/dialog-box/ foi removida. O componente jQuery UI Dialog
+ * está acessível diretamente na página de prática.
+ *
+ * Comportamento atual:
+ *  - O diálogo abre AUTOMATICAMENTE ao carregar a página (autoOpen: true)
+ *  - É modal (tem overlay de fundo)
+ *  - Botão "Ok" e botão "X" fecham o diálogo
+ *  - Após fechar, o elemento .ui-dialog permanece no DOM com display:none
+ *  - O .ui-widget-overlay é REMOVIDO do DOM ao fechar (não apenas ocultado)
+ *  - O overlay tem position:fixed e pode ser considerado "coberto" pelo Cypress
  */
 class DialogoPage {
   // ===========================================================================
@@ -51,7 +59,7 @@ class DialogoPage {
 
   /** Acessa a página de Caixa de Diálogo */
   acessar() {
-    cy.acessarPagina('/demo-site/dialog-box/')
+    cy.acessarPagina('/demoSite/practice/dialog/modal-message.html')
   }
 
   /** Clica no botão que abre o diálogo */
@@ -79,14 +87,24 @@ class DialogoPage {
     this.dialogo.should('be.visible')
   }
 
-  /** Verifica se o diálogo está oculto/fechado */
+  /** Verifica se o diálogo está oculto/fechado
+   *  jQuery UI mantém o elemento no DOM com display:none após o fechamento.
+   */
   verificarDialogoOculto() {
-    this.dialogo.should('not.exist')
+    this.dialogo.should('not.be.visible')
   }
 
-  /** Verifica se o overlay está visível */
+  /** Verifica se o overlay está presente no DOM quando o diálogo está aberto.
+   *  Usa should('exist') porque o overlay tem position:fixed e pode ser considerado
+   *  "coberto" por Cypress ao verificar visibilidade.
+   */
+  verificarOverlayPresente() {
+    this.overlay.should('exist')
+  }
+
+  /** @deprecated Use verificarOverlayPresente() */
   verificarOverlayVisivel() {
-    this.overlay.should('be.visible')
+    this.verificarOverlayPresente()
   }
 
   /**

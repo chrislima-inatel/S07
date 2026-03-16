@@ -1,9 +1,16 @@
 /**
  * Page Object — Página de Abas (Tabs)
- * URL: https://www.globalsqa.com/demo-site/tabs/
+ * URL: https://www.globalsqa.com/demo-site/accordion-and-tabs/
  *
- * Encapsula os seletores e ações da página de abas do jQuery UI.
- * Padrão: Page Object Model (POM)
+ * A URL /demo-site/tabs/ foi removida. As abas agora fazem parte da página
+ * /demo-site/accordion-and-tabs/ e usam o plugin easyResponsiveTabs
+ * (em vez do jQuery UI Tabs original).
+ *
+ * Seletores atualizados:
+ *  - Itens de aba:  .resp-tabs-list li                        (era: #tabs .ui-tabs-nav li)
+ *  - Aba ativa:     classe resp-tab-active                    (era: ui-tabs-active)
+ *  - Painéis:       .resp-tab-content                         (era: #tabs .ui-tabs-panel)
+ *  - Painel ativo:  .resp-tab-content.resp-tab-content-active (era: #tabs .ui-tabs-panel:visible)
  */
 class AbasPage {
   // ===========================================================================
@@ -12,22 +19,22 @@ class AbasPage {
 
   /** Retorna todos os itens de aba do menu de navegação */
   get itensDeAba() {
-    return cy.get('#tabs .ui-tabs-nav li')
+    return cy.get('.resp-tabs-list li')
   }
 
-  /** Retorna os links clicáveis das abas */
+  /** Retorna os itens clicáveis das abas (o próprio li é clicável no easyResponsiveTabs) */
   get linksDeAba() {
-    return cy.get('#tabs .ui-tabs-nav li a')
+    return cy.get('.resp-tabs-list li')
   }
 
   /** Retorna todos os painéis de conteúdo das abas */
   get paineisDeConteudo() {
-    return cy.get('#tabs .ui-tabs-panel')
+    return cy.get('.resp-tab-content')
   }
 
-  /** Retorna o painel de conteúdo atualmente visível */
+  /** Retorna o painel de conteúdo atualmente ativo */
   get painelAtivo() {
-    return cy.get('#tabs .ui-tabs-panel:visible')
+    return cy.get('.resp-tab-content.resp-tab-content-active')
   }
 
   // ===========================================================================
@@ -36,7 +43,7 @@ class AbasPage {
 
   /** Acessa a página de Abas */
   acessar() {
-    cy.acessarPagina('/demo-site/tabs/')
+    cy.acessarPagina('/demo-site/accordion-and-tabs/')
   }
 
   /**
@@ -64,7 +71,7 @@ class AbasPage {
    * @param {number} indice - Índice da aba (começa em 0)
    */
   verificarAbaAtiva(indice) {
-    this.itensDeAba.eq(indice).should('have.class', 'ui-tabs-active')
+    this.itensDeAba.eq(indice).should('have.class', 'resp-tab-active')
   }
 
   /**

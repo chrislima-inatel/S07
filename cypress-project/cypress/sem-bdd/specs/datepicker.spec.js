@@ -1,95 +1,70 @@
 /**
  * Testes sem BDD — Seletor de Data (DatePicker)
- * URL: https://www.globalsqa.com/demo-site/datepicker/
+ * URL: https://www.globalsqa.com/demoSite/practice/datepicker/default.html
  *
- * Abordagem: Page Object Model (POM)
+ * A página /demo-site/datepicker/ passou a usar iframes para o conteúdo.
+ * O componente jQuery UI DatePicker está disponível diretamente na URL de prática.
  *
- * A página tem 3 DatePickers jQuery UI:
- * - Picker 1: Clique no input abre o calendário
- * - Picker 2: Clique no ícone de calendário abre o picker
- * - Picker 3: Calendário inline (sempre visível)
+ * Estrutura da página:
+ *  - #datepicker             → campo de input que abre o calendário ao clicar
+ *  - #ui-datepicker-div      → contêiner flutuante do calendário
+ *  - .ui-datepicker-title    → cabeçalho com mês e ano
+ *  - .ui-datepicker-prev     → botão para ir ao mês anterior
+ *  - .ui-datepicker-next     → botão para ir ao próximo mês
+ *  - .ui-datepicker-calendar → tabela de dias
  */
-import DatePickerPage from '../../pages/DatePickerPage'
-
 describe('Seletor de Data (DatePicker)', () => {
   beforeEach(() => {
-    DatePickerPage.acessar()
+    cy.visit('/demoSite/practice/datepicker/default.html')
+    cy.get('#datepicker').should('exist')
   })
 
   // ---------------------------------------------------------------------------
-  context('DatePicker 1 — Abertura pelo input', () => {
+  context('Abertura do calendário', () => {
     it('deve abrir o calendário ao clicar no campo de input', () => {
-      DatePickerPage.abrirPicker1()
-      DatePickerPage.verificarCalendarioVisivel()
+      cy.get('#datepicker').click()
+      cy.get('#ui-datepicker-div').should('be.visible')
     })
 
     it('deve fechar o calendário ao selecionar uma data', () => {
-      DatePickerPage.abrirPicker1()
-      // Seleciona qualquer dia disponível
+      cy.get('#datepicker').click()
       cy.get('.ui-datepicker-calendar td:not(.ui-datepicker-unselectable) a').first().click()
-      DatePickerPage.verificarCalendarioOculto()
+      cy.get('#ui-datepicker-div').should('not.be.visible')
     })
 
     it('deve preencher o campo com a data selecionada', () => {
-      DatePickerPage.abrirPicker1()
-
-      // Captura o mês e ano atual exibido no calendário
-      cy.get('.ui-datepicker-title').invoke('text').then((cabecalho) => {
-        // Seleciona o dia 15
-        cy.get('.ui-datepicker-calendar td:not(.ui-datepicker-unselectable) a')
-          .contains('15')
-          .click()
-
-        // Verifica que o campo foi preenchido
-        DatePickerPage.campoPicker1.should('not.have.value', '')
-      })
+      cy.get('#datepicker').click()
+      cy.get('.ui-datepicker-calendar td:not(.ui-datepicker-unselectable) a')
+        .contains('15')
+        .click()
+      cy.get('#datepicker').should('not.have.value', '')
     })
   })
 
   // ---------------------------------------------------------------------------
-  context('DatePicker 1 — Navegação pelo calendário', () => {
+  context('Navegação pelo calendário', () => {
     beforeEach(() => {
-      DatePickerPage.abrirPicker1()
+      cy.get('#datepicker').click()
+      cy.get('#ui-datepicker-div').should('be.visible')
     })
 
     it('deve navegar para o próximo mês ao clicar no botão de avançar', () => {
-      // Captura o cabeçalho atual
       cy.get('.ui-datepicker-title').invoke('text').then((cabecalhoAtual) => {
-        // Clica em próximo mês
-        DatePickerPage.botaoProximoMes.click()
-
-        // Verifica que o cabeçalho mudou
+        cy.get('.ui-datepicker-next').click()
         cy.get('.ui-datepicker-title').invoke('text').should('not.equal', cabecalhoAtual)
       })
     })
 
     it('deve navegar para o mês anterior ao clicar no botão de voltar', () => {
       cy.get('.ui-datepicker-title').invoke('text').then((cabecalhoAtual) => {
-        DatePickerPage.botaoMesAnterior.click()
+        cy.get('.ui-datepicker-prev').click()
         cy.get('.ui-datepicker-title').invoke('text').should('not.equal', cabecalhoAtual)
       })
     })
-  })
 
-  // ---------------------------------------------------------------------------
-  context('DatePicker 2 — Abertura pelo ícone', () => {
-    it('deve abrir o calendário ao clicar no ícone de calendário', () => {
-      DatePickerPage.abrirPicker2PorIcone()
-      DatePickerPage.verificarCalendarioVisivel()
-    })
-  })
-
-  // ---------------------------------------------------------------------------
-  context('DatePicker 3 — Calendário inline', () => {
-    it('deve exibir o calendário inline sem necessidade de clique', () => {
-      DatePickerPage.calendarioInline.should('be.visible')
-    })
-
-    it('deve permitir selecionar um dia no calendário inline', () => {
-      // Seleciona o dia 10 no calendário inline
-      DatePickerPage.selecionarDiaInline('10')
-      // Verifica que o dia foi marcado como selecionado
-      cy.get('#datepicker3 .ui-datepicker-current-day').should('exist')
+    it('deve exibir dias disponíveis para seleção no calendário', () => {
+      cy.get('.ui-datepicker-calendar td:not(.ui-datepicker-unselectable) a')
+        .should('have.length.greaterThan', 0)
     })
   })
 })

@@ -1,9 +1,9 @@
 # language: pt
 
-Funcionalidade: Acordeão e Abas
+Funcionalidade: Acordeão
   Como um estudante de QA
-  Quero interagir com o acordeão e as abas da página
-  Para aprender a testar componentes expansíveis e de navegação por abas
+  Quero interagir com o acordeão da página
+  Para aprender a testar componentes expansíveis jQuery UI
 
   Contexto:
     Dado que acesso a página de Acordeão e Abas
@@ -26,9 +26,8 @@ Funcionalidade: Acordeão e Abas
     Quando clico no cabeçalho de acordeão de índice 1
     Então a seção aberta do acordeão deve ter conteúdo
 
-  Cenário: A segunda aba exibe conteúdo diferente da primeira
-    Quando clico na aba de índice 1 do componente de abas
-    Então o conteúdo da aba ativa deve ter mudado
+  # O teste de abas foi removido — a página de prática do acordeão
+  # não tem o componente de abas. Os testes de abas estão em abas.feature.
 
   Esquema do Cenário: Cada seção do acordeão pode ser expandida individualmente
     Quando clico no cabeçalho de acordeão de índice <indice>

@@ -1,28 +1,30 @@
 /**
  * Page Object — Página de iFrame
- * URL: https://www.globalsqa.com/demo-site/iframe/
+ * URL: https://www.globalsqa.com/demo-site/frames-and-windows/
  *
- * A página contém um iframe incorporado.
- * O Cypress não suporta iframes nativamente, por isso usamos o
- * comando customizado `cy.acessarIframe()` definido em commands.js.
+ * A URL /demo-site/iframe/ foi renomeada para /demo-site/frames-and-windows/.
+ * O iframe fica dentro da 3ª aba ("iFrame") e usa lazy loading (atributo data-src).
  *
- * CONCEITO IMPORTANTE:
- * Para interagir com elementos dentro de um iframe, é necessário
- * "entrar" no contexto do documento do iframe antes de buscar elementos.
+ * Pré-requisito (tratado no compartilhado.steps.js):
+ *  1. Clicar na aba "iFrame" para torná-la visível
+ *  2. Definir iframe.src = data-src para disparar o carregamento do conteúdo
+ *
+ * O Cypress não suporta iframes nativamente — usa o comando customizado
+ * `cy.acessarIframe()` definido em commands.js.
  */
 class IframePage {
   // ===========================================================================
   // SELETORES — Página principal
   // ===========================================================================
 
-  /** Elemento <iframe> na página principal */
+  /** Elemento <iframe> identificado pelo atributo name="globalSqa" */
   get iframe() {
-    return cy.get('iframe').first()
+    return cy.get('iframe[name="globalSqa"]')
   }
 
-  /** Elemento <iframe> por ID específico (se existir) */
+  /** Alias de iframe — mantido para compatibilidade */
   get iframePorId() {
-    return cy.get('#iFrame, iframe[name="iFrame"], iframe').first()
+    return cy.get('iframe[name="globalSqa"]')
   }
 
   // ===========================================================================
@@ -31,7 +33,7 @@ class IframePage {
 
   /** Acessa a página de iFrame */
   acessar() {
-    cy.acessarPagina('/demo-site/iframe/')
+    cy.acessarPagina('/demo-site/frames-and-windows/')
   }
 
   /**
@@ -42,7 +44,7 @@ class IframePage {
    * iframePage.acessarConteudoDoIframe().find('input').type('Olá')
    */
   acessarConteudoDoIframe() {
-    return cy.acessarIframe('iframe').first()
+    return cy.acessarIframe('iframe[name="globalSqa"]')
   }
 
   // ===========================================================================
@@ -66,7 +68,7 @@ class IframePage {
    * @param {string} texto - Texto esperado dentro do iframe
    */
   verificarTextoNoIframe(texto) {
-    cy.acessarIframe('iframe').should('contain.text', texto)
+    cy.acessarIframe('iframe[name="globalSqa"]').should('contain.text', texto)
   }
 
   /**
@@ -74,7 +76,7 @@ class IframePage {
    * @param {string} seletor - Seletor CSS do elemento dentro do iframe
    */
   verificarElementoNoIframe(seletor) {
-    cy.acessarIframe('iframe').find(seletor).should('exist')
+    cy.acessarIframe('iframe[name="globalSqa"]').find(seletor).should('exist')
   }
 }
 

@@ -1,10 +1,12 @@
 /**
- * Page Object — Página de Acordeão e Abas (Accordion & Tabs)
- * URL: https://www.globalsqa.com/demo-site/accordion-and-tabs/
+ * Page Object — Página de Acordeão (Accordion)
+ * URL: https://www.globalsqa.com/demoSite/practice/accordion/collapsible.html
  *
- * A página contém dois componentes jQuery UI:
- * 1. Acordeão: seções expansíveis e recolhíveis
- * 2. Abas: conteúdo alternado por abas (similar à página /tabs/)
+ * A URL /demo-site/accordion-and-tabs/ passou a usar iframes para o acordeão.
+ * O componente jQuery UI Accordion está acessível diretamente na página de prática.
+ *
+ * Os seletores de abas (.resp-tabs-list, .resp-tab-content) são mantidos
+ * para compatibilidade mas não são usados nos testes de acordeão.
  */
 class AcordeaoPage {
   // ===========================================================================
@@ -13,7 +15,7 @@ class AcordeaoPage {
 
   /** Cabeçalhos clicáveis do acordeão */
   get cabecalhosAcordeao() {
-    return cy.get('#accordion h3.ui-accordion-header')
+    return cy.get('#accordion h3')
   }
 
   /** Painéis de conteúdo do acordeão */
@@ -30,28 +32,28 @@ class AcordeaoPage {
   // SELETORES — Abas (segundo componente da página)
   // ===========================================================================
 
-  /** Links de aba do componente de tabs */
+  /** Links de aba do componente de tabs (easyResponsiveTabs — o próprio li é clicável) */
   get linksDeAba() {
-    return cy.get('#tabs2 .ui-tabs-nav li a, #tabs .ui-tabs-nav li a')
+    return cy.get('.resp-tabs-list li')
   }
 
   /** Painéis de conteúdo das abas */
   get paineisDeAba() {
-    return cy.get('[id^="tabs"] .ui-tabs-panel')
+    return cy.get('.resp-tab-content')
   }
 
-  /** Painel de aba atualmente visível */
+  /** Painel de aba atualmente ativo */
   get painelDeAbaAtivo() {
-    return cy.get('[id^="tabs"] .ui-tabs-panel:visible')
+    return cy.get('.resp-tab-content.resp-tab-content-active')
   }
 
   // ===========================================================================
   // AÇÕES — Acordeão
   // ===========================================================================
 
-  /** Acessa a página de Acordeão e Abas */
+  /** Acessa a página de Acordeão */
   acessar() {
-    cy.acessarPagina('/demo-site/accordion-and-tabs/')
+    cy.acessarPagina('/demoSite/practice/accordion/collapsible.html')
   }
 
   /**

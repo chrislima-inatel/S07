@@ -23,9 +23,6 @@ Funcionalidade: Seletor de Data (DatePicker)
     E clico no botão de próximo mês
     Então o cabeçalho do calendário deve ter mudado
 
-  Cenário: O calendário inline está visível sem necessidade de clique
-    Então o calendário inline deve estar visível
-
-  Cenário: Selecionar um dia no calendário inline marca o dia
-    Quando seleciono o dia "10" no calendário inline
-    Então o dia selecionado deve estar marcado no calendário inline
+  # Os cenários de calendário inline (#datepicker3) foram removidos.
+  # A página de prática /demoSite/practice/datepicker/default.html
+  # disponibiliza apenas o DatePicker 1 (#datepicker).

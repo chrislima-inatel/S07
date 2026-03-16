@@ -15,14 +15,14 @@ Funcionalidade: Caixas de Alerta JavaScript
 
   Cenário: Aceitar a caixa de confirmação exibe mensagem de OK
     Quando clico na aba de alerta de índice 1
-    E clico no botão Tentar
     E aceito a caixa de confirmação
+    E clico no botão Tentar
     Então o resultado da confirmação deve conter "You pressed OK!"
 
   Cenário: Cancelar a caixa de confirmação exibe mensagem de Cancelar
     Quando clico na aba de alerta de índice 1
-    E clico no botão Tentar
     E cancelo a caixa de confirmação
+    E clico no botão Tentar
     Então o resultado da confirmação deve conter "You pressed Cancel!"
 
   Cenário: Inserir nome no prompt exibe a saudação personalizada

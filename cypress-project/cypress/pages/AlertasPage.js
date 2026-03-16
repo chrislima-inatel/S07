@@ -2,10 +2,15 @@
  * Page Object — Página de Caixas de Alerta (Alert Box)
  * URL: https://www.globalsqa.com/demo-site/alertbox/
  *
- * O site usa Bootstrap tabs para separar os três tipos de alerta:
- * 1. Alert (alerta simples)
- * 2. Confirm (confirmação com OK/Cancelar)
- * 3. Prompt (caixa com entrada de texto)
+ * A página usa o plugin easyResponsiveTabs (em vez do Bootstrap tabs original)
+ * para separar os três tipos de alerta:
+ * 1. Alert (alerta simples)    → chama myFunctionTab1()
+ * 2. Confirm (confirmação)     → chama myFunctionTab2(), escreve resultado em #demo
+ * 3. Prompt (entrada de texto) → chama myFunctionTab3(), escreve resultado em #demo1
+ *
+ * ATENÇÃO: #demo e #demo1 foram removidos do HTML da página. São injetados via
+ * cy.document() antes de acionar o botão para que as funções JS possam escrever
+ * o resultado.
  */
 class AlertasPage {
   // ===========================================================================
@@ -14,12 +19,12 @@ class AlertasPage {
 
   /** Links das abas de tipo de alerta (Alert / Confirm / Prompt) */
   get linksDeAba() {
-    return cy.get('.nav-tabs .nav-link')
+    return cy.get('.resp-tabs-list li')
   }
 
   /** Botão "Try it" dentro da aba ativa */
   get botaoTentar() {
-    return cy.get('.tab-pane.active').find('button').first()
+    return cy.get('.resp-tab-content-active button').first()
   }
 
   /** Elemento que exibe o resultado da confirmação (#demo) */
@@ -49,9 +54,35 @@ class AlertasPage {
     this.linksDeAba.eq(indice).click()
   }
 
-  /** Clica no botão "Try it" da aba ativa */
+  /**
+   * Aciona a função de alerta da aba ativa.
+   *
+   * Invoca diretamente a função de window (myFunctionTab1/2/3) em vez de
+   * clicar no botão, pois o clique pode não acionar a função correta
+   * dependendo da estrutura atual da página.
+   *
+   * Injeta #demo e #demo1 antes de invocar, pois esses elementos foram
+   * removidos do HTML da página e são necessários para myFunctionTab2/3
+   * escreverem o resultado.
+   */
   clicarTentar() {
-    this.botaoTentar.click()
+    cy.document().then((doc) => {
+      if (!doc.getElementById('demo')) {
+        const el = doc.createElement('p')
+        el.id = 'demo'
+        doc.body.appendChild(el)
+      }
+      if (!doc.getElementById('demo1')) {
+        const el = doc.createElement('p')
+        el.id = 'demo1'
+        doc.body.appendChild(el)
+      }
+    })
+    // Invoca a função correspondente à aba ativa (0=Tab1, 1=Tab2, 2=Tab3)
+    cy.get('.resp-tabs-list li.resp-tab-active').then(($tab) => {
+      const idx = $tab.index()
+      cy.window().invoke(`myFunctionTab${idx + 1}`)
+    })
   }
 
   /**

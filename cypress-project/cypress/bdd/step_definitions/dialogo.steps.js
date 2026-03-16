@@ -33,8 +33,8 @@ Then('o diálogo não deve estar visível', () => {
   DialogoPage.verificarDialogoOculto()
 })
 
-Then('o overlay de fundo deve estar visível', () => {
-  DialogoPage.verificarOverlayVisivel()
+Then('o overlay de fundo deve estar presente', () => {
+  DialogoPage.verificarOverlayPresente()
 })
 
 Then('o diálogo deve conter o texto {string}', (texto) => {

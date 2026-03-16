@@ -1,11 +1,12 @@
 /**
  * Page Object — Página de Seletor de Data (DatePicker)
- * URL: https://www.globalsqa.com/demo-site/datepicker/
+ * URL: https://www.globalsqa.com/demoSite/practice/datepicker/default.html
  *
- * A página possui três DatePickers do jQuery UI:
- * 1. DatePicker 1: Campo de texto — clique no input abre o calendário
- * 2. DatePicker 2: Campo de texto com ícone — clique no ícone abre o calendário
- * 3. DatePicker 3 (inline): Calendário sempre visível na página
+ * A URL /demo-site/datepicker/ passou a usar iframes.
+ * O componente jQuery UI DatePicker está acessível diretamente na página de prática.
+ *
+ * A página de prática possui apenas o DatePicker 1 (#datepicker).
+ * DatePicker 2 e o calendário inline (#datepicker3) não estão disponíveis nesta URL.
  */
 class DatePickerPage {
   // ===========================================================================
@@ -80,7 +81,7 @@ class DatePickerPage {
 
   /** Acessa a página de Seletor de Data */
   acessar() {
-    cy.acessarPagina('/demo-site/datepicker/')
+    cy.acessarPagina('/demoSite/practice/datepicker/default.html')
   }
 
   /** Abre o primeiro DatePicker clicando no campo de input */

@@ -11,8 +11,9 @@ Funcionalidade: Menu Suspenso de Países
   Cenário: O dropdown está visível na página
     Então o dropdown de países deve estar visível
 
-  Cenário: O dropdown contém mais de 200 opções
-    Então o dropdown deve ter mais de 200 opções
+  # A lista foi reduzida de ~250 para ~125 países. Portugal e Germany foram removidos.
+  Cenário: O dropdown contém mais de 100 opções
+    Então o dropdown deve ter mais de 100 opções
 
   Cenário: Selecionar o Brasil como país
     Quando seleciono o país "Brazil"
@@ -22,9 +23,9 @@ Funcionalidade: Menu Suspenso de Países
     Quando seleciono o país "Argentina"
     Então o país selecionado deve ser "Argentina"
 
-  Cenário: Selecionar Portugal como país
-    Quando seleciono o país "Portugal"
-    Então o país selecionado deve ser "Portugal"
+  Cenário: Selecionar a França como país
+    Quando seleciono o país "France"
+    Então o país selecionado deve ser "France"
 
   Cenário: Trocar de país atualiza a seleção
     Quando seleciono o país "Brazil"
@@ -36,9 +37,7 @@ Funcionalidade: Menu Suspenso de Países
     Então o país selecionado deve ser "<pais>"
 
     Exemplos:
-      | pais        |
-      | Brazil      |
-      | Argentina   |
-      | Portugal    |
-      | France      |
-      | Germany     |
+      | pais      |
+      | Brazil    |
+      | Argentina |
+      | France    |
