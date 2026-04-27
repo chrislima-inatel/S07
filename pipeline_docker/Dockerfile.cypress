@@ -1,0 +1,30 @@
+FROM node:20-bullseye
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgtk2.0-0 \
+    libgtk-3-0 \
+    libgbm-dev \
+    libnotify-dev \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    libxtst6 \
+    xauth \
+    xvfb \
+    fonts-liberation \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY cypress-project/package.json cypress-project/package-lock.json ./
+RUN npm ci
+
+COPY cypress-project/ ./
+
+COPY pipeline_docker/scripts/cypress-entrypoint.sh /usr/local/bin/cypress-entrypoint.sh
+RUN chmod +x /usr/local/bin/cypress-entrypoint.sh
+
+ENV DISPLAY=:99
+ENV CYPRESS_CACHE_FOLDER=/root/.cache/Cypress
+
+ENTRYPOINT ["/usr/local/bin/cypress-entrypoint.sh"]

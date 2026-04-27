@@ -1,0 +1,14 @@
+FROM node:20-alpine
+
+RUN apk add --no-cache \
+    curl \
+    bash
+
+WORKDIR /app
+
+COPY api-testing/package.json api-testing/package-lock.json ./
+RUN npm ci
+
+COPY api-testing/ ./
+
+CMD ["tail", "-f", "/dev/null"]
