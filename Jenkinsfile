@@ -217,10 +217,12 @@ HTML
             echo "Pipeline concluído com SUCESSO!"
             node(null) {
                 sh '''
-                    bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
-                        "sucesso" \
-                        "${BUILD_URL}" \
-                        "${DESTINATARIO_EMAIL}"
+                    if [ -n "${DESTINATARIO_EMAIL:-}" ]; then
+                        bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                            "sucesso" "${BUILD_URL}" "${DESTINATARIO_EMAIL}"
+                    else
+                        echo "[INFO] DESTINATARIO_EMAIL não configurado — e-mail ignorado"
+                    fi
                 '''
             }
         }
@@ -229,10 +231,12 @@ HTML
             echo "Pipeline FALHOU. Verificar logs acima."
             node(null) {
                 sh '''
-                    bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
-                        "falha" \
-                        "${BUILD_URL}" \
-                        "${DESTINATARIO_EMAIL}"
+                    if [ -n "${DESTINATARIO_EMAIL:-}" ]; then
+                        bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                            "falha" "${BUILD_URL}" "${DESTINATARIO_EMAIL}"
+                    else
+                        echo "[INFO] DESTINATARIO_EMAIL não configurado — e-mail ignorado"
+                    fi
                 '''
             }
         }
@@ -241,20 +245,22 @@ HTML
             echo "Pipeline INSTÁVEL — alguns testes falharam."
             node(null) {
                 sh '''
-                    bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
-                        "falha" \
-                        "${BUILD_URL}" \
-                        "${DESTINATARIO_EMAIL}"
+                    if [ -n "${DESTINATARIO_EMAIL:-}" ]; then
+                        bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                            "falha" "${BUILD_URL}" "${DESTINATARIO_EMAIL}"
+                    else
+                        echo "[INFO] DESTINATARIO_EMAIL não configurado — e-mail ignorado"
+                    fi
                 '''
             }
         }
 
         always {
-            echo "Pipeline : ${env.NOME_PIPELINE}"
+            echo "Pipeline : ${env.NOME_PIPELINE ?: 'S07 — Testes Automatizados'}"
             echo "Build    : #${BUILD_NUMBER}"
             echo "Resultado: ${currentBuild.currentResult}"
             echo "Duração  : ${currentBuild.durationString}"
-            echo "Relatórios: ${env.RELATORIO_URL}"
+            echo "Relatórios: ${env.RELATORIO_URL ?: 'http://localhost:8081'}"
         }
 
     }
