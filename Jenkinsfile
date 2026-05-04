@@ -217,7 +217,7 @@ HTML
             echo "Pipeline concluído com SUCESSO!"
             node(null) {
                 sh '''
-                    bash /workspace/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                    bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
                         "sucesso" \
                         "${BUILD_URL}" \
                         "${DESTINATARIO_EMAIL}"
@@ -229,7 +229,7 @@ HTML
             echo "Pipeline FALHOU. Verificar logs acima."
             node(null) {
                 sh '''
-                    bash /workspace/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                    bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
                         "falha" \
                         "${BUILD_URL}" \
                         "${DESTINATARIO_EMAIL}"
@@ -241,7 +241,7 @@ HTML
             echo "Pipeline INSTÁVEL — alguns testes falharam."
             node(null) {
                 sh '''
-                    bash /workspace/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                    bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
                         "falha" \
                         "${BUILD_URL}" \
                         "${DESTINATARIO_EMAIL}"
@@ -254,7 +254,7 @@ HTML
             echo "Build    : #${BUILD_NUMBER}"
             echo "Resultado: ${currentBuild.currentResult}"
             echo "Duração  : ${currentBuild.durationString}"
-            echo "Relatórios: ${RELATORIO_URL}"
+            echo "Relatórios: ${env.RELATORIO_URL}"
         }
 
     }
