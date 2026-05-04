@@ -8,8 +8,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     gnupg \
     lsb-release \
-    msmtp \
-    msmtp-mta \
+    gosu \
     && rm -rf /var/lib/apt/lists/*
 
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
@@ -29,14 +28,11 @@ RUN curl -fsSL https://download.docker.com/linux/debian/gpg \
 
 RUN groupadd -f docker && usermod -aG docker jenkins
 
-COPY pipeline_docker/scripts/notificacao/msmtprc.template /etc/msmtprc.template
-COPY pipeline_docker/scripts/notificacao/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+COPY scripts/notificacao/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-COPY pipeline_docker/jenkins/plugins.txt /usr/share/jenkins/ref/plugins.txt
+COPY jenkins/plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN jenkins-plugin-cli --plugin-file /usr/share/jenkins/ref/plugins.txt
-
-USER jenkins
 
 EXPOSE 8080 50000
 

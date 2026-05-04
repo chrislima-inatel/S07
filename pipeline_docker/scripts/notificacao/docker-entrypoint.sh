@@ -6,22 +6,19 @@ echo "=========================================="
 echo "  Pipeline S07 — Iniciando Jenkins"
 echo "=========================================="
 
-if [[ -n "${GMAIL_USER:-}" && -n "${GMAIL_PASS:-}" ]]; then
-    echo "[INFO] Configurando msmtp com credenciais Gmail..."
-    sed "s|GMAIL_USER_PLACEHOLDER|${GMAIL_USER}|g; \
-         s|GMAIL_PASS_PLACEHOLDER|${GMAIL_PASS}|g" \
-        /etc/msmtprc.template > /etc/msmtprc
-    chmod 600 /etc/msmtprc
-    echo "[OK] msmtp configurado para ${GMAIL_USER}"
-else
-    echo "[AVISO] GMAIL_USER ou GMAIL_PASS não definidos."
-    echo "        Notificações por e-mail estarão desabilitadas."
-fi
+# Fix /relatorios volume permissions — named volumes are created as root:root
+mkdir -p /relatorios
+chown jenkins:jenkins /relatorios
+chmod 755 /relatorios
+echo "[OK] Permissões do diretório /relatorios ajustadas."
 
 if [[ -S /var/run/docker.sock ]]; then
     chmod 666 /var/run/docker.sock
     echo "[OK] Permissão do Docker socket ajustada."
+else
+    echo "[AVISO] Docker socket não encontrado em /var/run/docker.sock."
+    echo "        Certifique-se de que o volume está montado no docker-compose.yml."
 fi
 
-echo "[INFO] Iniciando Jenkins..."
-exec /usr/bin/tini -- /usr/local/bin/jenkins.sh "$@"
+echo "[INFO] Iniciando Jenkins como usuário jenkins..."
+exec gosu jenkins /usr/bin/tini -- /usr/local/bin/jenkins.sh "$@"

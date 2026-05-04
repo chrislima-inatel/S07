@@ -30,9 +30,6 @@ services:
     networks:
       - pipeline-net
     environment:
-      - GMAIL_USER=${GMAIL_USER}
-      - GMAIL_PASS=${GMAIL_PASS}
-      - DESTINATARIO_EMAIL=${DESTINATARIO_EMAIL}
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/login"]
