@@ -20,5 +20,10 @@ else
     echo "        Certifique-se de que o volume está montado no docker-compose.yml."
 fi
 
+echo "[INFO] Iniciando Xvfb (display virtual para Cypress)..."
+Xvfb :99 -screen 0 1920x1080x24 &
+export DISPLAY=:99
+echo "[OK] Xvfb iniciado no display :99"
+
 echo "[INFO] Iniciando Jenkins como usuário jenkins..."
 exec gosu jenkins /usr/bin/tini -- /usr/local/bin/jenkins.sh "$@"
