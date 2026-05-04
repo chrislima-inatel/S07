@@ -21,25 +21,22 @@ pipeline {
 
     stages {
 
-        stage('🚀 Preparação') {
+        stage('Preparação') {
             steps {
                 script {
-                    echo "=============================================="
                     echo "  ${NOME_PIPELINE}"
                     echo "  Build: #${BUILD_NUMBER}"
                     echo "  Branch: ${GIT_BRANCH ?: 'local'}"
-                    echo "=============================================="
                 }
                 sh '''
-                    echo "=== Versões das Ferramentas ==="
+                    echo "Verificando versões"
                     echo "Node.js: $(node --version)"
                     echo "npm:     $(npm --version)"
                     echo "Docker:  $(docker --version)"
                     echo ""
-                    echo "=== Containers Ativos ==="
+                    echo "Verificando containers"
                     docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
                     echo ""
-                    echo "=== Verificando containers do pipeline ==="
                     docker inspect cypress-runner --format "Cypress: {{.State.Status}}" 2>/dev/null || echo "AVISO: cypress-runner não encontrado"
                     docker inspect newman-runner  --format "Newman:  {{.State.Status}}" 2>/dev/null || echo "AVISO: newman-runner não encontrado"
                 '''
@@ -51,7 +48,7 @@ pipeline {
             }
         }
 
-        stage('📦 Instalação') {
+        stage('Build') {
             parallel {
 
                 stage('Cypress — npm ci') {
@@ -73,7 +70,7 @@ pipeline {
             }
         }
 
-        stage('🧪 Testes') {
+        stage('Testes') {
             parallel {
 
                 stage('UI — Cypress sem BDD') {
@@ -100,7 +97,7 @@ pipeline {
                     }
                 }
 
-                stage('UI — Cypress BDD') {
+                stage('Cypress BDD') {
                     steps {
                         echo "Iniciando testes Cypress (BDD/Gherkin)..."
                         sh '''
@@ -122,7 +119,7 @@ pipeline {
                     }
                 }
 
-                stage('API — Newman') {
+                stage('Postman - API — Newman') {
                     steps {
                         echo "Iniciando testes de API com Newman..."
                         sh '''
@@ -147,7 +144,7 @@ pipeline {
             }
         }
 
-        stage('📊 Relatórios') {
+        stage('Artefatos - Relatórios') {
             steps {
                 echo "Publicando relatórios..."
                 sh '''
@@ -217,43 +214,47 @@ HTML
     post {
 
         success {
-            echo "🎉 Pipeline concluído com SUCESSO!"
-            sh '''
-                bash /workspace/pipeline_docker/scripts/notificacao/enviar-email.sh \
-                    "sucesso" \
-                    "${BUILD_URL}" \
-                    "${DESTINATARIO_EMAIL}"
-            '''
+            echo "Pipeline concluído com SUCESSO!"
+            node(null) {
+                sh '''
+                    bash /workspace/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                        "sucesso" \
+                        "${BUILD_URL}" \
+                        "${DESTINATARIO_EMAIL}"
+                '''
+            }
         }
 
         failure {
-            echo "💔 Pipeline FALHOU. Verificar logs acima."
-            sh '''
-                bash /workspace/pipeline_docker/scripts/notificacao/enviar-email.sh \
-                    "falha" \
-                    "${BUILD_URL}" \
-                    "${DESTINATARIO_EMAIL}"
-            '''
+            echo "Pipeline FALHOU. Verificar logs acima."
+            node(null) {
+                sh '''
+                    bash /workspace/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                        "falha" \
+                        "${BUILD_URL}" \
+                        "${DESTINATARIO_EMAIL}"
+                '''
+            }
         }
 
         unstable {
-            echo "⚠️  Pipeline INSTÁVEL — alguns testes falharam."
-            sh '''
-                bash /workspace/pipeline_docker/scripts/notificacao/enviar-email.sh \
-                    "falha" \
-                    "${BUILD_URL}" \
-                    "${DESTINATARIO_EMAIL}"
-            '''
+            echo "Pipeline INSTÁVEL — alguns testes falharam."
+            node(null) {
+                sh '''
+                    bash /workspace/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                        "falha" \
+                        "${BUILD_URL}" \
+                        "${DESTINATARIO_EMAIL}"
+                '''
+            }
         }
 
         always {
-            echo "=== Sumário de Execução ==="
-            echo "Pipeline : ${NOME_PIPELINE}"
+            echo "Pipeline : ${env.NOME_PIPELINE}"
             echo "Build    : #${BUILD_NUMBER}"
             echo "Resultado: ${currentBuild.currentResult}"
             echo "Duração  : ${currentBuild.durationString}"
             echo "Relatórios: ${RELATORIO_URL}"
-            echo "==========================="
         }
 
     }
