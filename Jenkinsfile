@@ -30,12 +30,12 @@ pipeline {
                 }
                 sh '''
                     echo "Verificando versões"
-                    echo "Node.js: $(node --version)"
-                    echo "npm:     $(npm --version)"
-                    echo "Docker:  $(docker --version)"
+                    echo "Node.js: $(node --version 2>/dev/null || echo 'não encontrado')"
+                    echo "npm:     $(npm --version 2>/dev/null || echo 'não encontrado')"
+                    echo "Docker:  $(docker --version 2>/dev/null || echo 'não encontrado')"
                     echo ""
                     echo "Verificando containers"
-                    docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}"
+                    docker ps --format "table {{.Names}}\t{{.Status}}\t{{.Ports}}" 2>/dev/null || echo "AVISO: Docker não disponível"
                     echo ""
                     docker inspect cypress-runner --format "Cypress: {{.State.Status}}" 2>/dev/null || echo "AVISO: cypress-runner não encontrado"
                     docker inspect newman-runner  --format "Newman:  {{.State.Status}}" 2>/dev/null || echo "AVISO: newman-runner não encontrado"
@@ -215,43 +215,52 @@ HTML
 
         success {
             echo "Pipeline concluído com SUCESSO!"
-            node(null) {
-                sh '''
-                    if [ -n "${DESTINATARIO_EMAIL:-}" ]; then
-                        bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
-                            "sucesso" "${BUILD_URL}" "${DESTINATARIO_EMAIL}"
-                    else
-                        echo "[INFO] DESTINATARIO_EMAIL não configurado — e-mail ignorado"
-                    fi
-                '''
+            script {
+                def mainWs = env.WORKSPACE
+                node(null) {
+                    sh """
+                        if [ -n "\${DESTINATARIO_EMAIL:-}" ]; then
+                            bash ${mainWs}/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                                "sucesso" "\${BUILD_URL}" "\${DESTINATARIO_EMAIL}"
+                        else
+                            echo "[INFO] DESTINATARIO_EMAIL não configurado — e-mail ignorado"
+                        fi
+                    """
+                }
             }
         }
 
         failure {
             echo "Pipeline FALHOU. Verificar logs acima."
-            node(null) {
-                sh '''
-                    if [ -n "${DESTINATARIO_EMAIL:-}" ]; then
-                        bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
-                            "falha" "${BUILD_URL}" "${DESTINATARIO_EMAIL}"
-                    else
-                        echo "[INFO] DESTINATARIO_EMAIL não configurado — e-mail ignorado"
-                    fi
-                '''
+            script {
+                def mainWs = env.WORKSPACE
+                node(null) {
+                    sh """
+                        if [ -n "\${DESTINATARIO_EMAIL:-}" ]; then
+                            bash ${mainWs}/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                                "falha" "\${BUILD_URL}" "\${DESTINATARIO_EMAIL}"
+                        else
+                            echo "[INFO] DESTINATARIO_EMAIL não configurado — e-mail ignorado"
+                        fi
+                    """
+                }
             }
         }
 
         unstable {
             echo "Pipeline INSTÁVEL — alguns testes falharam."
-            node(null) {
-                sh '''
-                    if [ -n "${DESTINATARIO_EMAIL:-}" ]; then
-                        bash ${WORKSPACE}/pipeline_docker/scripts/notificacao/enviar-email.sh \
-                            "falha" "${BUILD_URL}" "${DESTINATARIO_EMAIL}"
-                    else
-                        echo "[INFO] DESTINATARIO_EMAIL não configurado — e-mail ignorado"
-                    fi
-                '''
+            script {
+                def mainWs = env.WORKSPACE
+                node(null) {
+                    sh """
+                        if [ -n "\${DESTINATARIO_EMAIL:-}" ]; then
+                            bash ${mainWs}/pipeline_docker/scripts/notificacao/enviar-email.sh \
+                                "falha" "\${BUILD_URL}" "\${DESTINATARIO_EMAIL}"
+                        else
+                            echo "[INFO] DESTINATARIO_EMAIL não configurado — e-mail ignorado"
+                        fi
+                    """
+                }
             }
         }
 
