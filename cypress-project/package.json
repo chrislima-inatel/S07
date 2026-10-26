@@ -13,7 +13,7 @@
     "abrir:bdd": "cypress open --config-file cypress.bdd.config.js"
   },
   "devDependencies": {
-    "@badeball/cypress-cucumber-preprocessor": "^13.0.3",
+    "@badeball/cypress-cucumber-preprocessor": "^22.0.0",
     "@bahmutov/cypress-esbuild-preprocessor": "^2.0.0",
     "cypress": "^13.0.0",
     "esbuild": "^0.20.0"
